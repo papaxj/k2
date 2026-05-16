@@ -24,6 +24,12 @@ public class GlobalExceptionHandler {
 				"VALIDATION_ERROR", "请求体参数校验失败", errors));
 	}
 
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ValidationErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+		return ResponseEntity.badRequest().body(new ValidationErrorResponse(
+				"BAD_REQUEST", ex.getMessage(), List.of()));
+	}
+
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ValidationErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
 		List<ValidationErrorResponse.FieldError> errors = ex.getConstraintViolations().stream()

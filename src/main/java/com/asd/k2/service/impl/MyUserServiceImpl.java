@@ -1,16 +1,19 @@
 package com.asd.k2.service.impl;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.asd.k2.common.Pageables;
 import com.asd.k2.dto.MyUserSaveRequest;
 import com.asd.k2.entity.MyUser;
 import com.asd.k2.mapper.MyUserRepository;
 import com.asd.k2.service.MyUserService;
 import com.asd.k2.vo.MyUserVo;
+import com.asd.k2.vo.PageResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,8 +26,10 @@ public class MyUserServiceImpl implements MyUserService {
 	}
 
 	@Override
-	public List<MyUserVo> listAll() {
-		return myUserRepository.findAll().stream().map(this::toVo).toList();
+	public PageResult<MyUserVo> page(int page, int size) {
+		Pageable pageable = Pageables.of(page, size);
+		Page<MyUser> result = myUserRepository.findAll(pageable);
+		return PageResult.of(result, page, this::toVo);
 	}
 
 	@Override
