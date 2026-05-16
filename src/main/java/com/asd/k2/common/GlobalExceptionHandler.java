@@ -21,13 +21,13 @@ public class GlobalExceptionHandler {
 				.map(this::toFieldError)
 				.toList();
 		return ResponseEntity.badRequest().body(new ValidationErrorResponse(
-				"VALIDATION_ERROR", "请求体参数校验失败", errors));
+				ResponseCode.Error.VALIDATION_ERROR, "请求体参数校验失败", errors));
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ValidationErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
 		return ResponseEntity.badRequest().body(new ValidationErrorResponse(
-				"BAD_REQUEST", ex.getMessage(), List.of()));
+				ResponseCode.Error.BAD_REQUEST, ex.getMessage(), List.of()));
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
 				.map(this::toFieldError)
 				.toList();
 		return ResponseEntity.badRequest().body(new ValidationErrorResponse(
-				"VALIDATION_ERROR", "请求参数校验失败", errors));
+				ResponseCode.Error.VALIDATION_ERROR, "请求参数校验失败", errors));
 	}
 
 	private ValidationErrorResponse.FieldError toFieldError(FieldError error) {

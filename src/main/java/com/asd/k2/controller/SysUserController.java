@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.asd.k2.common.ResponseCode;
 import com.asd.k2.common.ValidationErrorResponse;
 import com.asd.k2.dto.SysUserSaveRequest;
 import com.asd.k2.service.SysUserService;
@@ -53,8 +54,8 @@ public class SysUserController {
 
 	@Operation(summary = "按 ID 查询用户")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = SysUserVo.class))),
-			@ApiResponse(responseCode = "404", description = "用户不存在")
+			@ApiResponse(responseCode = ResponseCode.Http.OK, content = @Content(schema = @Schema(implementation = SysUserVo.class))),
+			@ApiResponse(responseCode = ResponseCode.Http.NOT_FOUND, description = "用户不存在")
 	})
 	@GetMapping("/{id}")
 	public ResponseEntity<SysUserVo> get(
@@ -64,8 +65,8 @@ public class SysUserController {
 
 	@Operation(summary = "新增用户")
 	@ApiResponses({
-			@ApiResponse(responseCode = "201", content = @Content(schema = @Schema(implementation = SysUserVo.class))),
-			@ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
+			@ApiResponse(responseCode = ResponseCode.Http.CREATED, content = @Content(schema = @Schema(implementation = SysUserVo.class))),
+			@ApiResponse(responseCode = ResponseCode.Http.BAD_REQUEST, content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
 	})
 	@PostMapping
 	public ResponseEntity<SysUserVo> create(@Valid @RequestBody SysUserSaveRequest request) {

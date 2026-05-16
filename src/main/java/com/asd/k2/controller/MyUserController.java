@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.asd.k2.common.ResponseCode;
 import com.asd.k2.common.ValidationErrorResponse;
 import com.asd.k2.dto.MyUserSaveRequest;
 import com.asd.k2.service.MyUserService;
@@ -44,7 +45,7 @@ public class MyUserController {
 	}
 
 	@Operation(summary = "分页查询用户列表")
-	@ApiResponse(responseCode = "200", description = "成功",
+	@ApiResponse(responseCode = ResponseCode.Http.OK, description = "成功",
 			content = @Content(schema = @Schema(implementation = PageResult.class)))
 	@GetMapping
 	public PageResult<MyUserVo> list(
@@ -55,11 +56,11 @@ public class MyUserController {
 
 	@Operation(summary = "按 ID 查询用户")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "成功",
+			@ApiResponse(responseCode = ResponseCode.Http.OK, description = "成功",
 					content = @Content(schema = @Schema(implementation = MyUserVo.class))),
-			@ApiResponse(responseCode = "400", description = "参数校验失败",
+			@ApiResponse(responseCode = ResponseCode.Http.BAD_REQUEST, description = "参数校验失败",
 					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
-			@ApiResponse(responseCode = "404", description = "用户不存在")
+			@ApiResponse(responseCode = ResponseCode.Http.NOT_FOUND, description = "用户不存在")
 	})
 	@GetMapping("/{id}")
 	public ResponseEntity<MyUserVo> get(
@@ -72,9 +73,9 @@ public class MyUserController {
 
 	@Operation(summary = "新增用户")
 	@ApiResponses({
-			@ApiResponse(responseCode = "201", description = "创建成功",
+			@ApiResponse(responseCode = ResponseCode.Http.CREATED, description = "创建成功",
 					content = @Content(schema = @Schema(implementation = MyUserVo.class))),
-			@ApiResponse(responseCode = "400", description = "参数校验失败",
+			@ApiResponse(responseCode = ResponseCode.Http.BAD_REQUEST, description = "参数校验失败",
 					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
 	})
 	@PostMapping
@@ -85,11 +86,11 @@ public class MyUserController {
 
 	@Operation(summary = "更新用户")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "更新成功",
+			@ApiResponse(responseCode = ResponseCode.Http.OK, description = "更新成功",
 					content = @Content(schema = @Schema(implementation = MyUserVo.class))),
-			@ApiResponse(responseCode = "400", description = "参数校验失败",
+			@ApiResponse(responseCode = ResponseCode.Http.BAD_REQUEST, description = "参数校验失败",
 					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
-			@ApiResponse(responseCode = "404", description = "用户不存在")
+			@ApiResponse(responseCode = ResponseCode.Http.NOT_FOUND, description = "用户不存在")
 	})
 	@PutMapping("/{id}")
 	public ResponseEntity<MyUserVo> update(
@@ -103,10 +104,10 @@ public class MyUserController {
 
 	@Operation(summary = "删除用户")
 	@ApiResponses({
-			@ApiResponse(responseCode = "204", description = "删除成功"),
-			@ApiResponse(responseCode = "400", description = "参数校验失败",
+			@ApiResponse(responseCode = ResponseCode.Http.NO_CONTENT, description = "删除成功"),
+			@ApiResponse(responseCode = ResponseCode.Http.BAD_REQUEST, description = "参数校验失败",
 					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
-			@ApiResponse(responseCode = "404", description = "用户不存在")
+			@ApiResponse(responseCode = ResponseCode.Http.NOT_FOUND, description = "用户不存在")
 	})
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(

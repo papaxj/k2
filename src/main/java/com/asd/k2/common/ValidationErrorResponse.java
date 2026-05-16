@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "参数校验失败响应")
 public record ValidationErrorResponse(
-		@Schema(description = "错误码", example = "VALIDATION_ERROR") String code,
+		@Schema(description = "错误码", example = ResponseCode.Error.VALIDATION_ERROR) String code,
 		@Schema(description = "错误说明", example = "请求参数校验失败") String message,
 		@Schema(description = "字段级错误列表") List<FieldError> errors) {
 
