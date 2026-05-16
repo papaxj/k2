@@ -1,0 +1,116 @@
+package com.asd.k2.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.asd.k2.common.ValidationErrorResponse;
+import com.asd.k2.dto.MyUserSaveRequest;
+import com.asd.k2.service.MyUserService;
+import com.asd.k2.vo.MyUserVo;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+
+@Tag(name = "用户管理", description = "my_user 表增删改查")
+@Validated
+@RestController
+@RequestMapping("/api/my-users")
+public class MyUserController {
+
+	private final MyUserService myUserService;
+
+	public MyUserController(MyUserService myUserService) {
+		this.myUserService = myUserService;
+	}
+
+	@Operation(summary = "查询用户列表", description = "返回 my_user 表全部记录")
+	@ApiResponse(responseCode = "200", description = "成功",
+			content = @Content(schema = @Schema(implementation = MyUserVo.class)))
+	@GetMapping
+	public List<MyUserVo> list() {
+		return myUserService.listAll();
+	}
+
+	@Operation(summary = "按 ID 查询用户")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "成功",
+					content = @Content(schema = @Schema(implementation = MyUserVo.class))),
+			@ApiResponse(responseCode = "400", description = "参数校验失败",
+					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
+			@ApiResponse(responseCode = "404", description = "用户不存在")
+	})
+	@GetMapping("/{id}")
+	public ResponseEntity<MyUserVo> get(
+			@Parameter(description = "用户主键 ID", example = "1")
+			@PathVariable @Positive(message = "用户 ID 必须为正整数") Integer id) {
+		return myUserService.getById(id)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@Operation(summary = "新增用户")
+	@ApiResponses({
+			@ApiResponse(responseCode = "201", description = "创建成功",
+					content = @Content(schema = @Schema(implementation = MyUserVo.class))),
+			@ApiResponse(responseCode = "400", description = "参数校验失败",
+					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class)))
+	})
+	@PostMapping
+	public ResponseEntity<MyUserVo> create(@Valid @RequestBody MyUserSaveRequest request) {
+		MyUserVo created = myUserService.create(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(created);
+	}
+
+	@Operation(summary = "更新用户")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "更新成功",
+					content = @Content(schema = @Schema(implementation = MyUserVo.class))),
+			@ApiResponse(responseCode = "400", description = "参数校验失败",
+					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
+			@ApiResponse(responseCode = "404", description = "用户不存在")
+	})
+	@PutMapping("/{id}")
+	public ResponseEntity<MyUserVo> update(
+			@Parameter(description = "用户主键 ID", example = "1")
+			@PathVariable @Positive(message = "用户 ID 必须为正整数") Integer id,
+			@Valid @RequestBody MyUserSaveRequest request) {
+		return myUserService.update(id, request)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
+	}
+
+	@Operation(summary = "删除用户")
+	@ApiResponses({
+			@ApiResponse(responseCode = "204", description = "删除成功"),
+			@ApiResponse(responseCode = "400", description = "参数校验失败",
+					content = @Content(schema = @Schema(implementation = ValidationErrorResponse.class))),
+			@ApiResponse(responseCode = "404", description = "用户不存在")
+	})
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(
+			@Parameter(description = "用户主键 ID", example = "1")
+			@PathVariable @Positive(message = "用户 ID 必须为正整数") Integer id) {
+		if (!myUserService.deleteById(id)) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.noContent().build();
+	}
+}

@@ -1,0 +1,8 @@
+/target/
+/src/test/
+/.idea/encodings.xml
+/.idea/compiler.xml
+/.idea/jarRepositories.xml
+/.idea/misc.xml
+/mvnw
+/mvnw.cmd
