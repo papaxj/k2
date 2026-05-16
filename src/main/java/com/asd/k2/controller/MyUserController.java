@@ -1,7 +1,5 @@
 package com.asd.k2.controller;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,12 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asd.k2.common.ValidationErrorResponse;
 import com.asd.k2.dto.MyUserSaveRequest;
 import com.asd.k2.service.MyUserService;
 import com.asd.k2.vo.MyUserVo;
+import com.asd.k2.vo.PageResult;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +27,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 
 @Tag(name = "用户管理", description = "my_user 表增删改查")
@@ -41,12 +43,14 @@ public class MyUserController {
 		this.myUserService = myUserService;
 	}
 
-	@Operation(summary = "查询用户列表", description = "返回 my_user 表全部记录")
+	@Operation(summary = "分页查询用户列表")
 	@ApiResponse(responseCode = "200", description = "成功",
-			content = @Content(schema = @Schema(implementation = MyUserVo.class)))
+			content = @Content(schema = @Schema(implementation = PageResult.class)))
 	@GetMapping
-	public List<MyUserVo> list() {
-		return myUserService.listAll();
+	public PageResult<MyUserVo> list(
+			@Parameter(description = "页码（从1开始）") @RequestParam(defaultValue = "1") @Min(1) int page,
+			@Parameter(description = "每页条数（最大100）") @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+		return myUserService.page(page, size);
 	}
 
 	@Operation(summary = "按 ID 查询用户")

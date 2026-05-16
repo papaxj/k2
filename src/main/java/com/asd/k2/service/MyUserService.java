@@ -1,14 +1,14 @@
 package com.asd.k2.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.asd.k2.dto.MyUserSaveRequest;
 import com.asd.k2.vo.MyUserVo;
+import com.asd.k2.vo.PageResult;
 
 public interface MyUserService {
 
-	List<MyUserVo> listAll();
+	PageResult<MyUserVo> page(int page, int size);
 
 	Optional<MyUserVo> getById(Integer id);
 
