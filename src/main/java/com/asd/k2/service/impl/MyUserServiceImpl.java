@@ -36,8 +36,7 @@ public class MyUserServiceImpl implements MyUserService {
 	@Transactional
 	public MyUserVo create(MyUserSaveRequest request) {
 		MyUser entity = new MyUser();
-		entity.setName(request.name());
-		entity.setAsName(request.asName());
+		applyRequest(entity, request);
 		return toVo(myUserRepository.save(entity));
 	}
 
@@ -45,8 +44,7 @@ public class MyUserServiceImpl implements MyUserService {
 	@Transactional
 	public Optional<MyUserVo> update(Integer id, MyUserSaveRequest request) {
 		return myUserRepository.findById(id).map(entity -> {
-			entity.setName(request.name());
-			entity.setAsName(request.asName());
+			applyRequest(entity, request);
 			return toVo(myUserRepository.save(entity));
 		});
 	}
@@ -61,7 +59,25 @@ public class MyUserServiceImpl implements MyUserService {
 		return true;
 	}
 
+	private void applyRequest(MyUser entity, MyUserSaveRequest request) {
+		entity.setName(request.name());
+		entity.setAsName(request.asName());
+		entity.setBirthday(request.birthday());
+		entity.setSex(request.sex());
+		entity.setEmail(request.email());
+		entity.setAddress(request.address());
+		entity.setAge(request.age());
+	}
+
 	private MyUserVo toVo(MyUser entity) {
-		return new MyUserVo(entity.getId(), entity.getName(), entity.getAsName());
+		return new MyUserVo(
+				entity.getId(),
+				entity.getName(),
+				entity.getAsName(),
+				entity.getBirthday(),
+				entity.getSex(),
+				entity.getEmail(),
+				entity.getAddress(),
+				entity.getAge());
 	}
 }
